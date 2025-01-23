@@ -1,0 +1,27 @@
+import pandas as pd
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
+import numpy as np
+
+data = pd.read_csv(r"C:\Users\nothi\OneDrive\Desktop\AI-ML\AI-ML\All dataset\Coursera.csv")
+
+numerical_features = ['rating', 'reviewcount']
+data['reviewcount'] = data['reviewcount'].str.replace('k', '').astype(float) * 1000
+
+imputer = SimpleImputer(strategy='mean')
+numerical_data = imputer.fit_transform(data[numerical_features])
+
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(numerical_data)
+
+pca = PCA(n_components=2)
+reduced_data = pca.fit_transform(scaled_data)
+
+pca_df = pd.DataFrame(reduced_data, columns=['PC1', 'PC2'])
+
+result = pd.concat([data, pca_df], axis=1)
+
+result.to_csv('reduced_dataset.csv', index=False)
+
+print("Dimensionality reduction completed. Reduced dataset saved as 'reduced_dataset.csv'.")
